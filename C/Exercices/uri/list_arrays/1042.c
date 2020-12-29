@@ -1,28 +1,32 @@
-/**Bismillahir Rahmanir Rahim.**/
-/*Desisti por enquanto, odeio windows*/
 #include <stdio.h>
 int main()
 {
-    int A,B,C;
-    scanf ("%d%d%d", &A,&B,&C);
-    if(A<B&&A<C)
-    {
-        if(B<C)
-            printf("%d\n%d\n%d\n",A,B,C);
-        else printf("%d\n%d\n%d\n",A,C,B);
+    int array[3], i, ord[3], j, temp;
+    for(i = 0; i < 3; i++){
+        scanf("%d", &array[i]);
     }
-    if(B<A&&B<C)
-    {
-        if(A<C)
-            printf("%d\n%d\n%d\n",B,A,C);
-        else printf("%d\n%d\n%d\n",B,C,A);
+
+    for(i = 0; i < 3; i++){
+        ord[i] = array[i];
     }
-    if(C<B&&C<A)
-    {
-        if(B<A)
-            printf("%d\n%d\n%d\n",C,B,A);
-        else printf("%d\n%d\n%d\n",C,A,B);
+
+    for(i = 0; i < 3; i++){
+        for(j = i + 1; j < 3; j++){
+            if(ord[i] > ord[j]){
+                temp = ord[i];
+                ord[i] = ord[j];
+                ord[j] = temp;
+            }
+        }
     }
-    printf ("\n%d\n%d\n%d\n",A,B,C);
+
+    for(i = 0; i < 3; i++){
+        printf("%i\n", ord[i]);
+    }
+    printf("\n");
+
+    for(i = 0; i < 3; i++){
+        printf("%i\n", array[i]);
+    }
     return 0;
 }
