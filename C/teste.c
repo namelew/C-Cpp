@@ -1,22 +1,43 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-int main(void){
-	void maior_e_menor(int array[], int tam);
-	int array[5] = {1, 7, 3, 2, 9};
+struct data{
+	int dia, mes, ano;
+};
 
-	maior_e_menor(array, 5);
+int extrai_data(struct data d){
+	return d.dia;
+}
 
+int compara_data(struct data d1, struct data d2){
+	int dif = (d1.ano+d1.mes+d1.dia) - (d2.ano + d2.mes + d2.dia);
+	if(dif > 0){
+		return 1;
+	} else if(dif < 0){
+		return -1;
+	}
 	return 0;
 }
 
-void maior_e_menor(int array[], int tam){
-	int maior, menor, i;
+int main(void){
+	struct data d1, d2;
+	int res;
 
-	for(i = 0; i < tam; i++){
-		if(i == 0 || array[i] > maior){maior = array[i];}
-		if(i == 0 || array[i] < menor){menor = array[i];}
+	scanf("%d/%d/%d", &d1.dia, &d1.mes, &d1.ano);
+	scanf("%d/%d/%d", &d2.dia, &d2.mes, &d2.ano);
+	
+	printf("%i\n", extrai_data(d1));
+	
+	res = compara_data(d1,d2);
+
+	if(res == 1){
+		printf("A data 1 eh posterior a data 2\n");
+	} 
+	if(res == -1){
+		printf("A data 1 eh anterior a data 2\n");
+	} 
+	if(res == 0) {
+		printf("Ambas sao iguias\n");
 	}
-    
-	printf("Maior: %i\nMenor: %i\n", maior, menor);
+	
+	return 0;
 }
