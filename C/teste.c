@@ -1,43 +1,33 @@
-#include <stdio.h>
+#include<stdio.h>
 
-struct data{
-	int dia, mes, ano;
-};
+typedef struct{
+     double real;
+     double imaginario;
+}Complexo;
 
-int extrai_data(struct data d){
-	return d.dia;
+Complexo criaComplexo(double real, double imaginario);
+Complexo somaComplexo(Complexo a, Complexo b);
+
+int main(){
+	Complexo n1, n2, sum;
+	scanf("%lf %lf", &n1.real, &n1.imaginario);
+	scanf("%lf %lf", &n2.real, &n2.imaginario);
+
+	sum = somaComplexo(n1, n2);
+
+	printf("Soma dos Reais = %.2lf\nSoma dos Imaginarios = %.2lf\n", sum.real, sum.imaginario);
+
+    return 0;
 }
 
-int compara_data(struct data d1, struct data d2){
-	int dif = (d1.ano+d1.mes+d1.dia) - (d2.ano + d2.mes + d2.dia);
-	if(dif > 0){
-		return 1;
-	} else if(dif < 0){
-		return -1;
-	}
-	return 0;
+Complexo criaComplexo(double real, double imaginario){
+	Complexo com = {real, imaginario};
+	return com;
 }
 
-int main(void){
-	struct data d1, d2;
-	int res;
-
-	scanf("%d/%d/%d", &d1.dia, &d1.mes, &d1.ano);
-	scanf("%d/%d/%d", &d2.dia, &d2.mes, &d2.ano);
-	
-	printf("%i\n", extrai_data(d1));
-	
-	res = compara_data(d1,d2);
-
-	if(res == 1){
-		printf("A data 1 eh posterior a data 2\n");
-	} 
-	if(res == -1){
-		printf("A data 1 eh anterior a data 2\n");
-	} 
-	if(res == 0) {
-		printf("Ambas sao iguias\n");
-	}
-	
-	return 0;
+Complexo somaComplexo(Complexo a, Complexo b){
+	Complexo soma;
+	soma.imaginario = a.imaginario + b.imaginario;
+	soma.real = a.real + b.real;
+	return soma;
 }

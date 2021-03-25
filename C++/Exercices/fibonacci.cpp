@@ -14,7 +14,7 @@ int main()
 }
 
 void fibonacci(int posi, int current, int next){
-    if(posi>0){
+    if(posi>-1){
         cout << current << " -> ";
         fibonacci(--posi,current+next,current);
     }else{
