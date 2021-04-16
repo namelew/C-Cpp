@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define NA_TAM 40
 
@@ -32,26 +33,29 @@ int main(){
     while(op != 0){
         scanf("%d", &op);
         if(op == 0){
+            //complete
             end(head);
         }
         if(op == 1){
+            //complete
             head = insert_student(head);
         }
         if(op == 2){
-            scanf("%s", &enrollment);
+            fgets(enrollment, sizeof(enrollment), stdin);
             head = remove_student(head, enrollment);
         }
         if(op == 3){
+            //complete
             show(head, 0);
         }
         if(op == 4){
             show(head, 1);
         }
         if(op == 5){
+            //complete
             tam(head);
         }
     }
-    printf("Loopou");
     return 0;
 }
 
@@ -86,7 +90,6 @@ Student *insert_student(Student *head){
     scanf("%f", &pt->gpa);
 
     if(head == NULL){
-        printf("Cabeca vazia\n");
         head = pt;
         head->next = NULL;
         return head;
@@ -104,7 +107,16 @@ Student *insert_student(Student *head){
 }
 
 void show(Student *head, int reverse){
-    printf("Unavalible %p %i\n", head, reverse);
+    Student *aux = head;
+    if(!reverse){
+        printf("%s, %s, %2d/%2d/%d, %.2f\n", aux->enrollment, aux->name, aux->birth_date.day, aux->birth_date.month, aux->birth_date.year, aux->gpa);
+        if(head->next== NULL){
+            return;
+        }
+        show(head->next, 0);
+    }else{
+        printf("Unavalible!\n");
+    }
 }
 
 void tam(Student *head){
