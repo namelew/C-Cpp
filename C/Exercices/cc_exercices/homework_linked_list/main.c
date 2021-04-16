@@ -25,7 +25,7 @@ void tam(Student *head);
 void end(Student *head);
 
 int main(){
-    Student *head;
+    Student *head = NULL;
     char enrollment[11];
     int op=1;
 
@@ -51,6 +51,7 @@ int main(){
             tam(head);
         }
     }
+    printf("Loopou");
     return 0;
 }
 
@@ -79,11 +80,13 @@ Student *insert_student(Student *head){
     Student *aux;
     Student *pt = malloc(sizeof(Student));
     pt->next = NULL;
-    scanf("%s", &pt->enrollment);
-    scanf("%s", &pt->name);
+    scanf("%s", pt->enrollment);
+    scanf("%s", pt->name);
     scanf("%d/%d/%d", &pt->birth_date.day, &pt->birth_date.month, &pt->birth_date.year);
     scanf("%f", &pt->gpa);
+
     if(head == NULL){
+        printf("Cabeca vazia\n");
         head = pt;
         head->next = NULL;
         return head;
