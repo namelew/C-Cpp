@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-# define NA_TAM 40
+#define NA_TAM 40
 
 typedef struct{
     int day;
@@ -18,8 +18,8 @@ struct student{
 };
 typedef struct student Student;
 
-Student *remove(Student *head, char enrollment[NA_TAM+1]);
-Student *insert(Student *head);
+Student *remove_student(Student *head, char enrollment[NA_TAM+1]);
+Student *insert_student(Student *head);
 void show(Student *head, int reverse);
 void tam(Student *head);
 void end(Student *head);
@@ -31,37 +31,36 @@ int main(){
 
     while(op != 0){
         scanf("%d", &op);
-        switch (op){
-            case 0:
-                end(head);
-                break;
-            case 1:
-                head = insert(head);
-                break;
-            case 2:
-                scanf("%s", &enrollment);
-                head = remove(head, enrollment);
-                break;
-            case 3:
-                show(head, 0);
-                break;
-            case 4:
-                show(head, 1);
-                break;
-            case 5:
-                tam(head);
-                break;
+        if(op == 0){
+            end(head);
+        }
+        if(op == 1){
+            head = insert_student(head);
+        }
+        if(op == 2){
+            scanf("%s", &enrollment);
+            head = remove_student(head, enrollment);
+        }
+        if(op == 3){
+            show(head, 0);
+        }
+        if(op == 4){
+            show(head, 1);
+        }
+        if(op == 5){
+            tam(head);
         }
     }
     return 0;
 }
 
-Student *remove(Student *head, char enrollment[NA_TAM+1]){
+Student *remove_student(Student *head, char enrollment[NA_TAM+1]){
     Student *aux, *prev;
     prev = NULL;
     aux = head;
     while(aux != NULL){
-        if(aux == enrollment){
+        // errado, nao eh desse jeito 
+        if(aux->enrollment == enrollment){
             if(aux==head){
                 head = aux -> next;
                 free(aux);
@@ -76,7 +75,7 @@ Student *remove(Student *head, char enrollment[NA_TAM+1]){
     }
 }
 
-Student *insert(Student *head){
+Student *insert_student(Student *head){
     Student *aux;
     Student *pt = malloc(sizeof(Student));
     pt->next = NULL;
@@ -92,6 +91,7 @@ Student *insert(Student *head){
     if(head -> next == NULL){
         head->next = pt;
     }else{
+        aux = head;
         while(aux->next != NULL){
             aux = aux->next;
         }
