@@ -41,7 +41,8 @@ int main(){
             head = insert_student(head);
         }
         if(op == 2){
-            fgets(enrollment, sizeof(enrollment), stdin);
+            //complete
+            scanf("%s", enrollment);
             head = remove_student(head, enrollment);
         }
         if(op == 3){
@@ -49,6 +50,7 @@ int main(){
             show(head, 0);
         }
         if(op == 4){
+            //complete
             show(head, 1);
         }
         if(op == 5){
@@ -60,12 +62,15 @@ int main(){
 }
 
 Student *remove_student(Student *head, char enrollment[NA_TAM+1]){
+    if(head == NULL){
+        printf("Lista Vazia!\n");
+        return head;
+    }
     Student *aux, *prev;
     prev = NULL;
     aux = head;
     while(aux != NULL){
-        // errado, nao eh desse jeito 
-        if(aux->enrollment == enrollment){
+        if(strcmp(aux->enrollment, enrollment) == 0){
             if(aux==head){
                 head = aux -> next;
                 free(aux);
@@ -109,13 +114,18 @@ Student *insert_student(Student *head){
 void show(Student *head, int reverse){
     Student *aux = head;
     if(!reverse){
-        printf("%s, %s, %2d/%2d/%d, %.2f\n", aux->enrollment, aux->name, aux->birth_date.day, aux->birth_date.month, aux->birth_date.year, aux->gpa);
-        if(head->next== NULL){
+        printf("%s, %s, %d/%d/%d, %.2f\n", aux->enrollment, aux->name, aux->birth_date.day, aux->birth_date.month, aux->birth_date.year, aux->gpa);
+        if(aux->next==NULL){
             return;
         }
-        show(head->next, 0);
+        show(aux->next, 0);
     }else{
-        printf("Unavalible!\n");
+        if(aux->next == NULL){
+            printf("%s, %s, %d/%d/%d, %.2f\n", aux->enrollment, aux->name, aux->birth_date.day, aux->birth_date.month, aux->birth_date.year, aux->gpa);
+            return;
+        }
+        show(aux->next, 1);
+        printf("%s, %s, %d/%d/%d, %.2f\n", aux->enrollment, aux->name, aux->birth_date.day, aux->birth_date.month, aux->birth_date.year, aux->gpa);
     }
 }
 
