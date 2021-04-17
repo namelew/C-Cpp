@@ -112,6 +112,10 @@ Student *insert_student(Student *head){
 }
 
 void show(Student *head, int reverse){
+    if(head == NULL){
+        printf("Lista Vazia!\n");
+        return head;
+    }
     Student *aux = head;
     if(!reverse){
         printf("%s, %s, %d/%d/%d, %.2f\n", aux->enrollment, aux->name, aux->birth_date.day, aux->birth_date.month, aux->birth_date.year, aux->gpa);
