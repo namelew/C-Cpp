@@ -75,14 +75,16 @@ Student *remove_student(Student *head, char enrollment[NA_TAM+1]){
                 head = aux -> next;
                 free(aux);
                 return head;
+            }else{
+                prev->next = aux->next;
+                free(aux);
+                aux = prev;
             }
-            prev->next = aux->next;
-            free(aux);
-            return head;
         }
         prev = aux;
         aux = aux -> next;
     }
+    return head;
 }
 
 Student *insert_student(Student *head){
