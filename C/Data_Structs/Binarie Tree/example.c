@@ -80,6 +80,7 @@ void free_tree(Node *source){
 }
 
 void show_tree(Node *source){
+    // in order
     if(source == NULL){
         return;
     }

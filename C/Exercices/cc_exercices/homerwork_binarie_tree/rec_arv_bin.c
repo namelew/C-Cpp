@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+// falta so testar nos casos de testes
+
 typedef struct BinTreeNode {
     char key;
     struct BinTreeNode *left;
@@ -44,7 +46,9 @@ BinTreeNode *BinTreeRebuild(char preordemEst[], int rootIndex, int *qtdNos) {
     return root;
 }
 
-
+void free_tree(BinTreeNode *root);
+void in_order(BinTreeNode *root);
+void pos_order(BinTreeNode *root);
 
 int main() {
     int qtdNos;
@@ -74,9 +78,43 @@ int main() {
     else {
         root = NULL;
     }
-
     //Faça a magia acontecer
+    in_order(root);
+    printf("\n");
+    pos_order(root);
+    printf("\n");
+    free_tree(root);
+    printf("\n");
 
     return 0;
 }
 
+void in_order(BinTreeNode *root){
+    // pronto
+    if(root == NULL){
+        return;
+    }
+    in_order(root->left);
+    printf("%c", root->key);
+    in_order(root->right);
+}
+
+void pos_order(BinTreeNode *root){
+    // errado problema no output 3 ??
+    if(root == NULL){
+        return;
+    }
+    pos_order(root->left);
+    pos_order(root->right);
+    printf("%c", root->key);
+}
+
+void free_tree(BinTreeNode *root){
+    if(root == NULL){
+        return;
+    }
+    free_tree(root->left);
+    free_tree(root->right);
+    printf("0");
+    free(root);
+}
