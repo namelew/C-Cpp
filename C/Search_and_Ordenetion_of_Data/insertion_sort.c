@@ -1,6 +1,8 @@
 # include <stdio.h>
 # include <stdlib.h>
 
+// ok
+
 void insert_sort(int *array, int tam);
 
 int main(){
@@ -17,11 +19,11 @@ int main(){
 }
 
 void insert_sort(int *array, int tam){
-    // Não funcionou, ver gravação da aula
+    // resolvido
     int i, j, p;
-    for(i = tam; i > 1; i++){
+    for(i = 1; i < tam; i++){
         p = array[i];
-        for(j = i; j > 1 && p > array[j-1]; j--){
+        for(j = i; j >= 1 && p <array[j-1]; j--){
             array[j] = array[j-1];
         }
         array[j] = p;
