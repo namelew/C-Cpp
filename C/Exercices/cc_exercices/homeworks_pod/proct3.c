@@ -31,14 +31,14 @@ int main(){
 
     printf("Array nao ordenado\n");
     for(int i = 0; i < tam;i++){
-        printf("nome: %s ano: %i\n", veiculos[i].nome, veiculos[i].ano);
+        printf("ano: %i modelo: %s\n", veiculos[i].ano, veiculos[i].nome);
     }
 
     radix_sort(veiculos, tam);
 
     printf("Array ordenado\n");
     for(int i = 0; i < tam;i++){
-        printf("nome: %s ano: %i\n", veiculos[i].nome, veiculos[i].ano);
+        printf("ano: %i modelo: %s\n", veiculos[i].ano, veiculos[i].nome);
     }
 
     return 0;
