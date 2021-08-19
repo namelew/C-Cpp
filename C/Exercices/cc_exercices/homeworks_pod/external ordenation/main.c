@@ -2,11 +2,11 @@
 # include <stdlib.h>
 # include <string.h>
 
-//Pra funcionar num_res/esp_mem >= num_arq
+//Pra funcionar num_res/esp_mem >= num_arq e num_res != esp_men
 
-# define ESP_MEM 2
+# define ESP_MEM 16
 # define NUM_RES 31
-# define NUM_ARQ 19
+# define NUM_ARQ 2
 
 void heapify(int arr[], int n, int i)
 {
