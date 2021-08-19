@@ -2,9 +2,11 @@
 # include <stdlib.h>
 # include <string.h>
 
-# define ESP_MEM 4
+//Pra funcionar num_res/esp_mem >= num_arq
+
+# define ESP_MEM 2
 # define NUM_RES 31
-# define NUM_ARQ 4
+# define NUM_ARQ 19
 
 void heapify(int arr[], int n, int i)
 {
@@ -53,7 +55,7 @@ FILE *combinaBlocos(FILE *arqEnt[], int blocoId, int iter) {
     for (i = 0; i < NUM_ARQ; i++)
         fseek(arqEnt[i], (blocoId - 1) * ESP_MEM * sizeof(int), SEEK_SET); // desloca o cursor do arquivo para o inicio da coluna que esta sendo intercalada
 
-    int *auxRead = malloc(sizeof(int) * NUM_ARQ);
+    int auxRead[NUM_ARQ];
 
     int *lidos = calloc(NUM_ARQ, sizeof(int));
 
@@ -81,7 +83,7 @@ FILE *combinaBlocos(FILE *arqEnt[], int blocoId, int iter) {
                     candidatoEscrita = i;
                 }
         }
-
+        
         if (candidatoEscrita < 0) {
             break;
         }
@@ -109,7 +111,7 @@ FILE *combinaBlocos(FILE *arqEnt[], int blocoId, int iter) {
 void externalSort(char *arqName) {
     FILE *auxFiles[NUM_ARQ];
     FILE *arq;
-    int *agBloco = malloc(sizeof(int) * ESP_MEM);
+    int agBloco[ESP_MEM];
     int size;
 
     //Primeira fase: ler os dados e colocar nos diferentes arquivos (classificacao)
@@ -120,12 +122,12 @@ void externalSort(char *arqName) {
         auxFiles[i] = fopen(fileName, "w+b");
     }
 
-    size = fread(agBloco, sizeof(int), ESP_MEM, arq);
+    size = fread(&agBloco, sizeof(int), ESP_MEM, arq);
     int i = 0;
     while (size > 0) {
-        // ordena bloco na memoria principal usando merge sort
-        heapSort(agBloco, NUM_RES);
-        fwrite(agBloco, sizeof(int), size, auxFiles[i % NUM_ARQ]);
+        // ordena bloco na memoria principal usando heap sort
+        heapSort(agBloco, ESP_MEM);
+        fwrite(&agBloco, sizeof(int), size, auxFiles[i % NUM_ARQ]);
         i++;
         size = fread(agBloco, sizeof(int), ESP_MEM, arq);
     }
@@ -145,7 +147,6 @@ void externalSort(char *arqName) {
         iteracao++;
         arquivosEntrada = arquivosSaida; // a saida vira a entrada da proxima etapa
     }
-
     //Terminou intercalacoes; copia do ultimo arquivo de merge de volta para o arquivo inicial
     fseek(arq, 0, SEEK_SET);
     fseek(arquivosSaida[0], 0, SEEK_SET);
