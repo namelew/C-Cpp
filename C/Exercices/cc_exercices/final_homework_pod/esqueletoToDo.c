@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// tomar cuidado com up e del, pois são operações destrutivas e precisaram ser 
 
 #define EXIT 10  // valor fixo para a opção que finaliza a aplicação
 
@@ -58,6 +59,18 @@ int menu()
      return op;
 }
 
+// encontra o registro dentro da Tree
+Task *achaTask(Task *source, char *key){
+     if(source == NULL || !strcmp(key, source->nome)){
+          return source;
+     }
+     if(strcmp(key, source->nome) > 0){
+          achaTask(source->next, key);
+     } else{
+          achaTask(source->prev, key);
+     }
+}
+
 // Permite o cadastro de uma tarefa
 Task *insTask(Task *source, Task *new)
 {
@@ -90,9 +103,50 @@ Task *new_node(){
 }
 
 // Permite excluir uma tarefa
-void delTask ()
+Task *delTask (Task *source, char *key)
 {
-    return;
+     // problema: está perdendo a referência do source
+     source = achaTask(source, key);
+     if(!source){
+          printf("Not founded!\n");
+          return source;
+     } else{
+          if(source->prev == NULL && source->next == NULL){ // nó sem filhos
+               free(source);
+               source = NULL;
+          }else if(source->prev == NULL){ // somente o filho da direita
+               Task *aux = source;
+               source = source->next;
+               free(aux);
+          }else if(source->next == NULL){ // somente o filho da esquerda
+               Task *aux = source;
+               source = source->prev;
+               free(aux);
+          }else{
+               Task *aux = source->prev;
+               while(aux->next != NULL){
+                    aux = aux->next;
+               }
+               char aux_nome[50];
+               strcpy(aux_nome, aux->nome);
+               int aux_prioridade = aux->prioridade;
+               Date aux_data = {aux->entrega.day, aux->entrega.month};
+
+               strcpy(aux->nome, source->nome);
+               aux->entrega.day = source->entrega.day;
+               aux->entrega.month = source->entrega.month;
+               aux->prioridade = source->prioridade;
+
+               strcpy(source->nome, aux_nome);
+               source->entrega.day = aux_data.day;
+               source->entrega.month = aux_data.month;
+               source->prioridade = aux_prioridade;
+
+               source->prev = delTask(source->prev, key);
+          }
+     }
+     printf("Registro removido com sucesso!\n");
+     return source;
 }
 
 // Lista o conteudo da lista de tarefas (todos os campos)
@@ -112,22 +166,15 @@ void listTasks (Task *source)
 // Permite consultar uma tarefa da lista pelo nome
 void queryTask (Task *source, char *key)
 {
-     if(!strcmp(key, source->nome)){
-          printf("----------------------------------\n");
-          printf("Nome: %s\n", source->nome);
-          printf("Prioridade: %i\n", source->prioridade);
-          printf("Data de Entrega: %d/%d\n", source->entrega.day, source->entrega.month);
-          return;
-     }
-     if(source == NULL){
+     Task *result = achaTask(source, key);
+     if(!result){
           printf("Not founded!\n");
           return;
      }
-     if(strcmp(key, source->nome) > 0){
-          queryTask(source->next, key);
-     } else{
-          queryTask(source->prev, key);
-     }
+     printf("----------------------------------\n");
+     printf("Nome: %s\n", source->nome);
+     printf("Prioridade: %i\n", source->prioridade);
+     printf("Data de Entrega: %d/%d\n", source->entrega.day, source->entrega.month);
 }
 
 // Permite a atualização dos dados de uma tarefa
@@ -140,8 +187,8 @@ void upTask ()
 int main()
 {
      int op;
-     Tree tree;
-     init_tree(&tree);
+     Tree MP;
+     init_tree(&MP);
      Task *new;
      char nome[50];
      do
@@ -151,19 +198,25 @@ int main()
           {
                case 1:
                     new = new_node();
-                    tree.source = insTask(tree.source, new);
+                    MP.source = insTask(MP.source, new);
                     break;
-               case 2: delTask();
+               case 2:
+                    printf("Nome: ");
+                    fgets(nome, 50, stdin);
+                    nome[strcspn(nome, "\n")] = '\0';
+                    MP.source = delTask(MP.source, " ");
+                    printf("----------------------------------\n");
+                    break;
                case 3: upTask();
                case 4:
                     printf("Nome: ");
                     fgets(nome, 50, stdin);
                     nome[strcspn(nome, "\n")] = '\0';
-                    queryTask(tree.source, nome);
+                    queryTask(MP.source, nome);
                     printf("----------------------------------\n");
                     break;
                case 5: 
-                    listTasks(tree.source);
+                    listTasks(MP.source);
                     printf("----------------------------------\n");
           }
      }while(op!=EXIT);
