@@ -42,6 +42,15 @@ void init_tree(Tree *tree){ // elimina lixo da memória
      tree->source = NULL;
 }
 
+int ordem(char nome[50]){
+     int ordem = 0, i = 0;
+     while(nome[i] != '\0'){
+          ordem += nome[i];
+          i++;
+     }
+     return ordem;
+}
+
 // Apresenta o menu da aplicação e retorna a opção selecionada
 int menu()
 {
@@ -64,7 +73,7 @@ Task *insTask(Task *source, Task *new)
      if(source == NULL){
           return new;
      }
-     if(new->prioridade > source->prioridade){
+     if(ordem(new->nome) > ordem(source->nome)){
           source->next = insTask(source->next, new);
      } else {
           source->prev = insTask(source->prev, new);
@@ -97,21 +106,37 @@ void delTask ()
 // Lista o conteudo da lista de tarefas (todos os campos)
 void listTasks (Task *source)
 {
-    // in order
+     // in order
      if(source == NULL){
           return;
      }
      listTasks(source->prev);
+     printf("----------------------------------\n");
      printf("Nome: %s\n", source->nome);
      printf("Prioridade: %i\n", source->prioridade);
-     printf("Data de Entrega: %i/%i\n", source->entrega.day, source->entrega.month);
+     printf("Data de Entrega: %d/%d\n", source->entrega.day, source->entrega.month);
      listTasks(source->next);
 }
 
 // Permite consultar uma tarefa da lista pelo nome
-void queryTask ()
+void queryTask (Task *source, char *key)
 {
-     return;
+     if(!strcmp(key, source->nome)){
+          printf("----------------------------------\n");
+          printf("Nome: %s\n", source->nome);
+          printf("Prioridade: %i\n", source->prioridade);
+          printf("Data de Entrega: %d/%d\n", source->entrega.day, source->entrega.month);
+          return;
+     }
+     if(source == NULL){
+          printf("Not founded!\n");
+          return;
+     }
+     if(strcmp(key, source->nome) > 0){
+          queryTask(source->next, key);
+     } else{
+          queryTask(source->prev, key);
+     }
 }
 
 // Permite a atualização dos dados de uma tarefa
@@ -127,6 +152,7 @@ int main()
      Tree tree;
      init_tree(&tree);
      Task *new;
+     char nome[50];
      do
      {
           op=menu();
@@ -138,8 +164,16 @@ int main()
                     break;
                case 2: delTask();
                case 3: upTask();
-               case 4: queryTask();
-               case 5: listTasks(tree.source);
+               case 4:
+                    printf("Nome: ");
+                    fgets(nome, 50, stdin);
+                    nome[strcspn(nome, "\n")] = '\0';
+                    queryTask(tree.source, nome);
+                    printf("----------------------------------\n");
+                    break;
+               case 5: 
+                    listTasks(tree.source);
+                    printf("----------------------------------\n");
           }
      }while(op!=EXIT);
 
