@@ -42,15 +42,6 @@ void init_tree(Tree *tree){ // elimina lixo da memória
      tree->source = NULL;
 }
 
-int ordem(char nome[50]){
-     int ordem = 0, i = 0;
-     while(nome[i] != '\0'){
-          ordem += nome[i];
-          i++;
-     }
-     return ordem;
-}
-
 // Apresenta o menu da aplicação e retorna a opção selecionada
 int menu()
 {
@@ -73,7 +64,7 @@ Task *insTask(Task *source, Task *new)
      if(source == NULL){
           return new;
      }
-     if(ordem(new->nome) > ordem(source->nome)){
+     if(strcmp(new->nome, source->nome) > 0){
           source->next = insTask(source->next, new);
      } else {
           source->prev = insTask(source->prev, new);
@@ -81,6 +72,7 @@ Task *insTask(Task *source, Task *new)
      return source;
 }
 
+// Cria uma tarefa
 Task *new_node(){
      Task *n = malloc(sizeof(Task));
      printf("Nome: ");
@@ -106,7 +98,6 @@ void delTask ()
 // Lista o conteudo da lista de tarefas (todos os campos)
 void listTasks (Task *source)
 {
-     // in order
      if(source == NULL){
           return;
      }
