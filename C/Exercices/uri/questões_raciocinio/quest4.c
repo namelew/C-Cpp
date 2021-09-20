@@ -3,6 +3,7 @@
 # include <stdlib.h>
 
 int main(){
+    //Questão 4:
     double conta, tpagar;
     int np, i;
 
@@ -20,7 +21,10 @@ int main(){
         p[i] = tpagar;
         st += tpagar;
     }
-    p[i-1] = tpagar + ((st + (conta * 0.001)) - conta);
+    // Isso foi uma forma que eu encontrei de fazer depois do fim do teste      
+    //p[i-1] = tpagar + ((st + (conta * 0.001)) - conta);
+    // Esse era como estava durante o teste
+    p[i-1] = tpagar + ((st + 0.01) - conta);
 
     for(i = 0; i < np; i++){
         printf("Valor a pagar pessoa %d: %.2lf\n", i+1 , p[i]);
