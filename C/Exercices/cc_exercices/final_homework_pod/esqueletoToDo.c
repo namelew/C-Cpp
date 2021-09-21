@@ -59,6 +59,13 @@ int menu()
      return op;
 }
 
+int Vazio(Task *source){
+     if(source == NULL){
+          return 1;
+     }
+     return 0;
+}
+
 // encontra o registro dentro da Tree
 Task *achaTask(Task *source, char *key){
      if(source == NULL || !strcmp(key, source->nome)){
@@ -105,47 +112,6 @@ Task *new_node(){
 // Permite excluir uma tarefa
 Task *delTask (Task *source, char *key)
 {
-     // problema: está perdendo a referência do source
-     source = achaTask(source, key);
-     if(!source){
-          printf("Not founded!\n");
-          return source;
-     } else{
-          if(source->prev == NULL && source->next == NULL){ // nó sem filhos
-               free(source);
-               source = NULL;
-          }else if(source->prev == NULL){ // somente o filho da direita
-               Task *aux = source;
-               source = source->next;
-               free(aux);
-          }else if(source->next == NULL){ // somente o filho da esquerda
-               Task *aux = source;
-               source = source->prev;
-               free(aux);
-          }else{
-               Task *aux = source->prev;
-               while(aux->next != NULL){
-                    aux = aux->next;
-               }
-               char aux_nome[50];
-               strcpy(aux_nome, aux->nome);
-               int aux_prioridade = aux->prioridade;
-               Date aux_data = {aux->entrega.day, aux->entrega.month};
-
-               strcpy(aux->nome, source->nome);
-               aux->entrega.day = source->entrega.day;
-               aux->entrega.month = source->entrega.month;
-               aux->prioridade = source->prioridade;
-
-               strcpy(source->nome, aux_nome);
-               source->entrega.day = aux_data.day;
-               source->entrega.month = aux_data.month;
-               source->prioridade = aux_prioridade;
-
-               source->prev = delTask(source->prev, key);
-          }
-     }
-     printf("Registro removido com sucesso!\n");
      return source;
 }
 
@@ -204,7 +170,11 @@ int main()
                     printf("Nome: ");
                     fgets(nome, 50, stdin);
                     nome[strcspn(nome, "\n")] = '\0';
-                    MP.source = delTask(MP.source, " ");
+                    if(!Vazio(MP.source)){
+                         MP.source = delTask(MP.source, nome);
+                    } else{
+                         printf("Registro vazio\n");
+                    }
                     printf("----------------------------------\n");
                     break;
                case 3: upTask();
@@ -212,11 +182,19 @@ int main()
                     printf("Nome: ");
                     fgets(nome, 50, stdin);
                     nome[strcspn(nome, "\n")] = '\0';
-                    queryTask(MP.source, nome);
+                    if(!Vazio(MP.source)){
+                         queryTask(MP.source, nome);
+                    } else{
+                         printf("Registro vazio\n");
+                    }
                     printf("----------------------------------\n");
                     break;
                case 5: 
-                    listTasks(MP.source);
+                    if(!Vazio(MP.source)){
+                         listTasks(MP.source);
+                    } else{
+                         printf("Registro vazio\n");
+                    }
                     printf("----------------------------------\n");
           }
      }while(op!=EXIT);
