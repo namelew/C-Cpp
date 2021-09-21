@@ -109,10 +109,69 @@ Task *new_node(){
      return n;
 }
 
+Task* minValueNode(Task* node)
+{
+    Task* current = node;
+ 
+    /* loop down to find the leftmost leaf */
+    while (current && current->prev != NULL)
+        current = current->prev;
+ 
+    return current;
+}
+
 // Permite excluir uma tarefa
 Task *delTask (Task *source, char *key)
 {
-     return source;
+     // base case
+    if (source == NULL)
+        return source;
+ 
+    // If the key to be deleted is
+    // smaller than the root's
+    // key, then it lies in left subtree
+    if (strcmp(key, source->nome) < 0)
+        source->prev = delTask(source->prev, key);
+
+    // If the key to be deleted is
+    // greater than the root's
+    // key, then it lies in right subtree
+    else if (strcmp(key, source->nome) > 0)
+        source->next = delTask(source->next, key);
+ 
+    // if key is same as root's key, then This is the node
+    // to be deleted
+    else {
+        // node has no child
+        if (source->prev==NULL && source->next==NULL)
+            return NULL;
+       
+        // node with only one child or no child
+        else if (source->prev == NULL) {
+            struct node* temp = source->next;
+            free(source);
+            return temp;
+        }
+        else if (source->next == NULL) {
+            struct node* temp = source->prev;
+            free(source);
+            return temp;
+        }
+ 
+        // node with two children: Get the inorder successor
+        // (smallest in the right subtree)
+        Task* temp = minValueNode(source->next);
+ 
+        // Copy the inorder successor's content to this node
+        strcpy(source->nome, temp->nome);
+        source->prioridade = temp->prioridade;
+        source->entrega.day = temp->entrega.day;
+        source->entrega.month = temp->entrega.month;
+ 
+        // Delete the inorder successor
+        source->next = delTask(source->next, temp->nome);
+    }
+    return source;
 }
 
 // Lista o conteudo da lista de tarefas (todos os campos)
