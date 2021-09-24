@@ -109,11 +109,10 @@ Task *new_node(){
      return n;
 }
 
-Task* minValueNode(Task* node)
+Task* minValue(Task* node)
 {
     Task* current = node;
  
-    /* loop down to find the leftmost leaf */
     while (current && current->prev != NULL)
         current = current->prev;
  
@@ -123,30 +122,19 @@ Task* minValueNode(Task* node)
 // Permite excluir uma tarefa
 Task *delTask (Task *source, char *key)
 {
-     // base case
     if (source == NULL)
         return source;
  
-    // If the key to be deleted is
-    // smaller than the root's
-    // key, then it lies in left subtree
     if (strcmp(key, source->nome) < 0)
         source->prev = delTask(source->prev, key);
 
-    // If the key to be deleted is
-    // greater than the root's
-    // key, then it lies in right subtree
     else if (strcmp(key, source->nome) > 0)
         source->next = delTask(source->next, key);
  
-    // if key is same as root's key, then This is the node
-    // to be deleted
     else {
-        // node has no child
         if (source->prev==NULL && source->next==NULL)
             return NULL;
        
-        // node with only one child or no child
         else if (source->prev == NULL) {
             struct node* temp = source->next;
             free(source);
@@ -158,17 +146,13 @@ Task *delTask (Task *source, char *key)
             return temp;
         }
  
-        // node with two children: Get the inorder successor
-        // (smallest in the right subtree)
-        Task* temp = minValueNode(source->next);
+        Task* temp = minValue(source->next);
  
-        // Copy the inorder successor's content to this node
         strcpy(source->nome, temp->nome);
         source->prioridade = temp->prioridade;
         source->entrega.day = temp->entrega.day;
         source->entrega.month = temp->entrega.month;
  
-        // Delete the inorder successor
         source->next = delTask(source->next, temp->nome);
     }
     return source;
@@ -203,9 +187,15 @@ void queryTask (Task *source, char *key)
 }
 
 // Permite a atualização dos dados de uma tarefa
-void upTask ()
+void upTask (Task *source, char *key)
 {
-     return;
+     Task *aux = achaTask(source, key);
+     printf("Nova prioridade: ");
+     scanf("%d", &aux->prioridade);
+     printf("Nova data de entrega: ");
+     scanf("%d/%d", &aux->entrega.day, &aux->entrega.month);
+
+     printf("Dados alterados\n");
 }
 
 // Programa principal
@@ -224,6 +214,7 @@ int main()
                case 1:
                     new = new_node();
                     MP.source = insTask(MP.source, new);
+                    printf("----------------------------------\n");
                     break;
                case 2:
                     printf("Nome: ");
@@ -236,7 +227,17 @@ int main()
                     }
                     printf("----------------------------------\n");
                     break;
-               case 3: upTask();
+               case 3:
+                    printf("Nome: ");
+                    fgets(nome, 50, stdin);
+                    nome[strcspn(nome, "\n")] = '\0';
+                    if(!Vazio(MP.source)){
+                         upTask(MP.source, nome);
+                    } else{
+                         printf("Registro vazio\n");
+                    }
+                    printf("----------------------------------\n");
+                    break;
                case 4:
                     printf("Nome: ");
                     fgets(nome, 50, stdin);
