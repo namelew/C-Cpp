@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// tomar cuidado com up e del, pois são operações destrutivas e precisaram ser 
+// falta implementar a ordenação externa 
 
 #define EXIT 10  // valor fixo para a opção que finaliza a aplicação
 
@@ -26,7 +26,7 @@ typedef struct{
 // Estrutura que contém os campos dos registros das tarefas
 struct REC {
      char nome[50];
-     int prioridade; // prioridade é minha chave primária na BST
+     int prioridade;
      Date entrega; 
 	struct REC *next; // implemente como lista, como árvore BST, AVL...
 	struct REC *prev;
@@ -34,6 +34,12 @@ struct REC {
 
 // Tipo criado para instanciar variaveis do tipo acima
 typedef struct REC Task;
+
+typedef struct registro{
+     char nome[50];
+     int prioridade;
+     Date entrega;
+}Registro;
 
 typedef struct{
      Task *source;
@@ -109,8 +115,7 @@ Task *new_node(){
      return n;
 }
 
-Task* minValue(Task* node)
-{
+Task* minValue(Task* node){ // encontra o menor valor da arvore da direita
     Task* current = node;
  
     while (current && current->prev != NULL)
@@ -122,38 +127,40 @@ Task* minValue(Task* node)
 // Permite excluir uma tarefa
 Task *delTask (Task *source, char *key)
 {
-    if (source == NULL)
-        return source;
+     if (source == NULL)
+          return source;
  
-    if (strcmp(key, source->nome) < 0)
-        source->prev = delTask(source->prev, key);
+     if (strcmp(key, source->nome) < 0)
+          source->prev = delTask(source->prev, key);
 
-    else if (strcmp(key, source->nome) > 0)
-        source->next = delTask(source->next, key);
+     else if (strcmp(key, source->nome) > 0)
+          source->next = delTask(source->next, key);
  
-    else {
-        if (source->prev==NULL && source->next==NULL)
-            return NULL;
-       
-        else if (source->prev == NULL) {
-            struct node* temp = source->next;
-            free(source);
-            return temp;
-        }
-        else if (source->next == NULL) {
-            struct node* temp = source->prev;
-            free(source);
-            return temp;
-        }
+     else {
+          if (source->prev==NULL && source->next==NULL){
+               free(source);
+               return NULL;
+          } // nó sem filhos
+          else if (source->prev == NULL) { // nó com apenas o filho da direita
+               struct node* temp = source->next;
+               free(source);
+               return temp;
+          }else if (source->next == NULL) { // nó com apenas o filho da esquerda
+               struct node* temp = source->prev;
+               free(source);
+               return temp;
+          }
+          // nó com dois filhos
+
+          Task* temp = minValue(source->next); // procura o menor valor da árvore da direita
+
+          // copia o valor do nó encontrado no nó que desejamos apagar  
+          strcpy(source->nome, temp->nome);
+          source->prioridade = temp->prioridade;
+          source->entrega.day = temp->entrega.day;
+          source->entrega.month = temp->entrega.month;
  
-        Task* temp = minValue(source->next);
- 
-        strcpy(source->nome, temp->nome);
-        source->prioridade = temp->prioridade;
-        source->entrega.day = temp->entrega.day;
-        source->entrega.month = temp->entrega.month;
- 
-        source->next = delTask(source->next, temp->nome);
+          source->next = delTask(source->next, temp->nome); //e elimina o valor duplicado
     }
     return source;
 }
@@ -170,6 +177,18 @@ void listTasks (Task *source)
      printf("Prioridade: %i\n", source->prioridade);
      printf("Data de Entrega: %d/%d\n", source->entrega.day, source->entrega.month);
      listTasks(source->next);
+}
+
+int sizeTree (Task *source){ // retorna o tamanho da arvore
+     if(source == NULL){
+          return 0;
+     }
+     int left = sizeTree(source->prev);
+     int right = sizeTree(source->next);
+
+     int total = left + right + 1;
+
+     return total;
 }
 
 // Permite consultar uma tarefa da lista pelo nome
@@ -196,6 +215,44 @@ void upTask (Task *source, char *key)
      scanf("%d/%d", &aux->entrega.day, &aux->entrega.month);
 
      printf("Dados alterados\n");
+}
+
+int makeBackup(Task *source, Registro *backup, int tam){
+     if(source == NULL){return tam;}
+
+     strcpy(backup[tam].nome, source->nome);
+     backup[tam].prioridade = source->prioridade;
+     backup[tam].entrega.day = source->entrega.day;
+     backup[tam].entrega.month = source->entrega.month;
+
+     tam++;
+
+     if(source->prev != NULL){
+          tam = makeBackup(source->prev, backup, tam);
+     }
+     if(source->next != NULL){
+          tam = makeBackup(source->next, backup, tam);
+     }
+
+     return tam;
+}
+
+void Update(Task *source){ // escreve os dados no arquivo
+     int *lixo = malloc(sizeof(int));
+     int *tam = malloc(sizeof(int));
+     *tam = sizeTree(source);
+     Registro backup[*tam];
+     *lixo = makeBackup(source, backup, 0);
+     FILE *arq = fopen("database.txt", "wb");
+     if(fwrite(backup, sizeof(Registro), *tam, arq) != *tam){
+          printf("Erro na gravação\n");
+     }
+     free(tam);
+     free(lixo);
+     fclose(arq);
+}
+
+void Download(){ // transfere do arquivo para a memória principal
 }
 
 // Programa principal
@@ -259,5 +316,6 @@ int main()
           }
      }while(op!=EXIT);
 
+     Update(MP.source);
      return 0;
 }
