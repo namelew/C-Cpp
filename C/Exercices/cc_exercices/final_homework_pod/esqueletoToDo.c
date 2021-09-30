@@ -13,8 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// falta implementar a ordenação externa 
-
 #define EXIT 10  // valor fixo para a opção que finaliza a aplicação
 
 //Struct que representa a data.
@@ -65,7 +63,7 @@ int menu()
      return op;
 }
 
-int Vazio(Task *source){
+int Vazio(Task *source){ // checa se a árvore está ou não vazia
      if(source == NULL){
           return 1;
      }
@@ -217,7 +215,7 @@ void upTask (Task *source, char *key)
      printf("Dados alterados\n");
 }
 
-int makeBackup(Task *source, Registro *backup, int tam){
+int makeBackup(Task *source, Registro *backup, int tam){ // retira os dados da arvore e os coloca no vetor
      if(source == NULL){return tam;}
 
      strcpy(backup[tam].nome, source->nome);
@@ -240,19 +238,56 @@ int makeBackup(Task *source, Registro *backup, int tam){
 void Update(Task *source){ // escreve os dados no arquivo
      int *lixo = malloc(sizeof(int));
      int *tam = malloc(sizeof(int));
+
      *tam = sizeTree(source);
      Registro backup[*tam];
+
      *lixo = makeBackup(source, backup, 0);
+
      FILE *arq = fopen("database.txt", "wb");
+     FILE *tamanho = fopen("tamanho.txt", "wb");
+
      if(fwrite(backup, sizeof(Registro), *tam, arq) != *tam){
           printf("Erro na gravação\n");
      }
+
+     if(fwrite(tam, sizeof(int), 1, tamanho) != 1){
+          printf("Erro na gravação\n");
+     }
+
      free(tam);
      free(lixo);
      fclose(arq);
+     fclose(tamanho);
 }
 
-void Download(){ // transfere do arquivo para a memória principal
+Task *Download(FILE *arq, Task *source){ // transfere do arquivo para a memória principal
+     if(arq == NULL){
+          return NULL;
+     }
+     FILE *tamanho = fopen("tamanho.txt", "rb");
+     int *tam = malloc(sizeof(int));
+
+     fread(tam, sizeof(int), 1, tamanho);
+
+     Registro download[*tam];
+
+     fread(download, sizeof(Registro), *tam, arq);
+
+     for(int i = 0; i < *tam; i++){
+          Task *new = malloc(sizeof(Task));
+          strcpy(new->nome, download[i].nome);
+          new->prioridade = download[i].prioridade;
+          new->entrega.day = download[i].entrega.day;
+          new->entrega.month = download[i].entrega.month;
+          new->next = NULL;
+          new->prev = NULL;
+          source = insTask(source, new);
+     }
+
+     free(tam);
+     fclose(tamanho);
+     return source;
 }
 
 // Programa principal
@@ -263,6 +298,10 @@ int main()
      init_tree(&MP);
      Task *new;
      char nome[50];
+
+     FILE *arq = fopen("database.txt", "rb");
+     MP.source = Download(arq, MP.source);
+     fclose(arq);
      do
      {
           op=menu();
