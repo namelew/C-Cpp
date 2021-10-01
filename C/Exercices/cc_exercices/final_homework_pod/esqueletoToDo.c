@@ -290,6 +290,15 @@ Task *Download(FILE *arq, Task *source){ // transfere do arquivo para a memória
      return source;
 }
 
+void free_tree(Task *source){
+     if(source == NULL){
+          return;
+     }
+     free_tree(source->next);
+     free_tree(source->prev);
+     free(source);
+}
+
 // Programa principal
 int main()
 {
@@ -356,5 +365,6 @@ int main()
      }while(op!=EXIT);
 
      Update(MP.source);
+     free_tree(MP.source);
      return 0;
 }
