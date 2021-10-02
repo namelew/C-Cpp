@@ -70,6 +70,71 @@ int Vazio(Task *source){ // checa se a árvore está ou não vazia
      return 0;
 }
 
+int depthSubTree(Task *source){ // vê a profundidade de um nodo da árvore
+	int depthLeft, depthRight;
+
+	if (source == NULL)
+		return 0;
+
+	depthLeft  = depthSubTree(source->prev);
+	depthRight = depthSubTree(source->next);
+
+	return 1 + (depthRight>depthLeft?depthRight: depthLeft);
+}
+
+Task* ll(Task *source){ // rotação left simples
+	Task *aux = source->prev;
+	source->prev = aux->next;
+	aux->next = source;
+
+	return aux;
+}
+
+Task* rr(Task *source){ // rotação right simples
+	Task *aux = source->next;
+	source->next = aux->prev;
+	aux->prev = source;
+
+	return aux;
+}
+
+Task* lr(Task* source){ // rotação composta left right
+	source->prev = rr(source->prev);
+	return ll(source);
+}
+
+Task* rl(Task* source){ // rotação composta right left
+	source->next = ll(source->next);
+	return rr(source);
+}
+
+Task* checkBalance(Task* source){ // função principal da avl tree
+	int balanceFactor = depthSubTree(source->prev) - depthSubTree(source->next);
+	int sonBalance;
+	Task *son;
+	
+	if (balanceFactor > 1){
+		son = source->prev;
+		sonBalance = depthSubTree(son->prev) - depthSubTree(son->next);
+		if (sonBalance > 0 ){
+			source = ll(source);
+		}else{
+			source = lr(source);
+		}
+		
+	}else if (balanceFactor < -1){
+		son = source->next;
+		sonBalance = depthSubTree(son->prev) - depthSubTree(son->next);
+		if (sonBalance < 0 ){
+			source = rr(source);
+		}else{
+			source = rl(source);
+		}
+	}
+	return source;
+}
+
+
 // encontra o registro dentro da Tree
 Task *achaTask(Task *source, char *key){
      if(source == NULL || !strcmp(key, source->nome)){
@@ -93,6 +158,9 @@ Task *insTask(Task *source, Task *new)
      } else {
           source->prev = insTask(source->prev, new);
      }
+
+     source = checkBalance(source);
+     
      return source;
 }
 
