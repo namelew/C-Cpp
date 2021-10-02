@@ -160,7 +160,7 @@ Task *insTask(Task *source, Task *new)
      }
 
      source = checkBalance(source);
-     
+
      return source;
 }
 
@@ -266,9 +266,9 @@ void queryTask (Task *source, char *key)
           return;
      }
      printf("----------------------------------\n");
-     printf("Nome: %s\n", source->nome);
-     printf("Prioridade: %i\n", source->prioridade);
-     printf("Data de Entrega: %d/%d\n", source->entrega.day, source->entrega.month);
+     printf("Nome: %s\n", result->nome);
+     printf("Prioridade: %i\n", result->prioridade);
+     printf("Data de Entrega: %d/%d\n", result->entrega.day, result->entrega.month);
 }
 
 // Permite a atualização dos dados de uma tarefa
