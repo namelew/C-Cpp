@@ -203,31 +203,41 @@ Task *delTask (Task *source, char *key)
           source->next = delTask(source->next, key);
  
      else {
-          if (source->prev==NULL && source->next==NULL){
-               free(source);
-               return NULL;
-          } // nó sem filhos
-          else if (source->prev == NULL) { // nó com apenas o filho da direita
-               struct node* temp = source->next;
-               free(source);
-               return temp;
-          }else if (source->next == NULL) { // nó com apenas o filho da esquerda
-               struct node* temp = source->prev;
-               free(source);
-               return temp;
-          }
-          // nó com dois filhos
+          if (source->prev==NULL || source->next==NULL){
+               Task *temp = source->prev ? source->prev:source->next; // faz temp ser igual ao filho não nulo
+               
+               if(temp == NULL){ // nó sem filhos
+                    temp = source;
+                    source = NULL;
+               } else{ // nó com apenas um filho
+                    // copia os valores do filho pro pai
+                    strcpy(source->nome, temp->nome);
+                    source->prioridade = temp->prioridade;
+                    source->entrega.day = temp->entrega.day;
+                    source->entrega.month = temp->entrega.month;
+                    source->next = NULL;
+                    source->prev = NULL;
+               }
+               free(temp); // elimina o filho
+          } else{
+               // nó com dois filhos
+               Task* temp = minValue(source->next); // procura o menor valor da árvore da direita
 
-          Task* temp = minValue(source->next); // procura o menor valor da árvore da direita
-
-          // copia o valor do nó encontrado no nó que desejamos apagar  
-          strcpy(source->nome, temp->nome);
-          source->prioridade = temp->prioridade;
-          source->entrega.day = temp->entrega.day;
-          source->entrega.month = temp->entrega.month;
+               // copia o valor do nó encontrado no nó que desejamos apagar  
+               strcpy(source->nome, temp->nome);
+               source->prioridade = temp->prioridade;
+               source->entrega.day = temp->entrega.day;
+               source->entrega.month = temp->entrega.month;
  
-          source->next = delTask(source->next, temp->nome); //e elimina o valor duplicado
+               source->next = delTask(source->next, temp->nome); //e elimina o valor duplicado
+          }
     }
+    if(source == NULL){
+         return source; 
+    }
+
+    source = checkBalance(source);
+
     return source;
 }
 
